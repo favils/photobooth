@@ -33,7 +33,7 @@ export default function Photobooth() {
     let count = 3;
     setCountdown(count);
     const countBtn = document.getElementById("countbtn");
-    countBtn.style.display = "none";
+    if (countBtn) countBtn.style.display = "none";
 
     const interval = setInterval(() => {
       count--;
@@ -41,7 +41,7 @@ export default function Photobooth() {
         clearInterval(interval);
         setCountdown(null)
         takepicture();
-        countBtn.style.display = "block";
+        if (countBtn) countBtn.style.display = "block";
       } else {
         setCountdown(count);
       }
