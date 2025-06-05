@@ -15,6 +15,11 @@ export default function Photobooth() {
     navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
       video.srcObject = stream;
     })
+
+    return () => {
+      video.remove();
+    };
+
   }, []);
 
   return (
