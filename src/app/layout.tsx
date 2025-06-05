@@ -1,3 +1,7 @@
+import type { Metadata } from "next";
+import "./globals.css";
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -5,9 +9,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-purple-400">
+      <body>
         {children}
       </body>
     </html>
   );
 }
+
