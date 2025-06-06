@@ -23,6 +23,13 @@ export default function Photobooth() {
       video.srcObject = stream;
     });
 
+    /* future feature: camera denied error msg
+    const [isDenied, setIsDenied] = useState(false)
+    const permissionStatus = await navigator.permissions.query({ name: 'camera' });
+    if(permissionStatus.state === 'denied') {
+      setIsDenied(True);
+    } */
+
     return () => {
       if (video.srcObject instanceof MediaStream) {
         video.srcObject.getTracks().forEach((track) => track.stop());
@@ -92,38 +99,94 @@ export default function Photobooth() {
     setPhotos((prev) => [...prev, dataURL]);
   };
 
+  const generateStrip = async (photos: string[]) => {
+    if (photos.length < 3) return;
+    
+    // https://stackoverflow.com/questions/73627776/how-do-you-draw-an-image-from-data-url-to-a-html-canvas
+    const loadImage = (src: string): Promise<HTMLImageElement> =>
+      new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+
+    const images = await Promise.all(photos.map(loadImage));
+
+    const width = images[0].width;
+    const height = images[0].height;
+    const gap = 15;
+    const stripH = height * 3 + gap*2 + 250;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width + 60;
+    canvas.height = stripH;
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) return;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    images.forEach((img, i) => {
+      ctx.drawImage(img, 30, i * (height+gap) + 30, width, height);
+    });
+
+    return canvas.toDataURL("image/png");
+
+  }
+
+  const download = async () => {
+    const stripURL = await generateStrip(photos);
+    if (!stripURL) return;
+
+    const link = document.createElement("a");
+    link.href = stripURL;
+    link.download = "photobooth.png";
+    link.click();
+  };
+
   return (
     <div className="h-[100vh] flex items-center justify-center">
-      <div className="w-[95%] h-[75%] rounded-full flex flex-row bg-cover bg-center"
+      <div
+        className="w-[95%] h-[75%] rounded-full flex flex-col items-center justify-center bg-cover bg-center"
         style={{ backgroundImage: 'url("/bg.png")' }}
       >
-        <div className="w-2/3 flex flex-col items-center justify-center">
-          <div id="livecam" className="h-2/3 overflow-hidden relative">
-            <video ref={videoRef} className="w-full h-full object-cover" />
-            {countdown !== null && (
-              <div className="absolute inset-0 flex items-center justify-center text-white text-6xl font-bold z-10">
-                {countdown}
-              </div>
+        <div className="w-full max-w-6xl h-[75%] flex flex-row overflow-hidden">
+          <div className="flex-1 flex flex-col items-center justify-center px-6">
+            <div id="livecam" className="h-2/3 overflow-hidden relative">
+              <video ref={videoRef} className="w-full h-full object-cover" />
+              {countdown !== null && (
+                <div className="absolute inset-0 flex items-center justify-center text-white text-6xl font-bold z-10">
+                  {countdown}
+                </div>
+              )}
+              <div id="flash" className="absolute inset-0 bg-white opacity-0 pointer-events-none transition-opacity duration-100 hidden"
+              />
+            </div>
+
+            {!isCounting && (
+              <button onClick={startCountdown} id="countbtn" className="px-6 py-3 m-3 group bg-white text-purple-300 hover:scale-115 font-semibold rounded-full border-2 transition">
+                <span className="block group-hover:hidden">ready?</span>
+                <span className="hidden group-hover:block">start countdown!</span>
+              </button>
             )}
-            <div id="flash" className="absolute inset-0 bg-white opacity-0 pointer-events-none transition-opacity duration-100 hidden"
-            />
           </div>
 
-          {!isCounting && (
-            <button onClick={startCountdown} id="countbtn" className="px-6 py-3 m-3 group bg-white text-purple-300 font-semibold rounded-full border-2 transition">
-              <span className="block group-hover:hidden">ready?</span>
-              <span className="hidden group-hover:block">start countdown!</span>
-            </button>
-          )}
-        </div>
+          <div className="flex-1 p-6 flex flex-col items-center justify-center space-y-4 overflow-y-auto">
+            {photos.map((photo, index) => (
+              <img key={index} src={photo} alt={`Photo ${index + 1}`} className="w-30 h-auto"/>
+            ))}
+            <div>
+              {photos.length === 3 && 
+              <button onClick={download} className="px-6 py-3 mt-3 group bg-white text-purple-300 font-semibold rounded-full border-2 hover:scale-115 transition">
+                download your strip!
+              </button>
+              }
+            </div>
+          </div>
 
-        <div className="w-1/3 p-4 flex flex-col items-left justify-center space-y-4 overflow-y-auto">
-          {photos.map((photo, index) => (
-            <img key={index} src={photo} alt={`Photo ${index + 1}`} className="w-24 h-auto"/>
-          ))}
+          <canvas ref={canvasRef} className="hidden" />
         </div>
-
-        <canvas ref={canvasRef} className="hidden" />
       </div>
     </div>
   );

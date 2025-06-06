@@ -24,12 +24,12 @@ export default function Home() {
         style={{ backgroundImage: 'url("/bg.png")' }}
       >
         
-        <div className={`text-9xl text-white ${ZTFormom.className}`}>
+        <div className={`text-9xl text-shadows text-white ${ZTFormom.className}`}>
           photobooth
         </div>
         
         <Link href='/photobooth'>
-          <button className="px-6 py-3 bg-white text-purple-300 font-semibold rounded-full hover:bg-black hover:text-white transition">
+          <button className="fadeInUp px-6 py-3 bg-white text-purple-300 font-semibold rounded-full hover:bg-purple-300 border-2 hover:text-white transition">
             take some pictures! →
           </button>
         </Link>
