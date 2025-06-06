@@ -147,13 +147,10 @@ export default function Photobooth() {
 
   return (
     <div className="h-[100vh] flex items-center justify-center">
-      <div
-        className="w-[95%] h-[75%] rounded-full flex flex-col items-center justify-center bg-cover bg-center"
-        style={{ backgroundImage: 'url("/bg.png")' }}
-      >
-        <div className="w-full max-w-6xl h-[75%] flex flex-row overflow-hidden">
+      
+        <div className="w-full max-w-4xl h-[75%] flex flex-row overflow-hidden">
           <div className="flex-1 flex flex-col items-center justify-center px-6">
-            <div id="livecam" className="h-2/3 overflow-hidden relative">
+            <div id="livecam" className="h-2/3 overflow-hidden rounded-4xl border-2 relative">
               <video ref={videoRef} className="w-full h-full object-cover" />
               {countdown !== null && (
                 <div className="absolute inset-0 flex items-center justify-center text-white text-6xl font-bold z-10">
@@ -187,7 +184,6 @@ export default function Photobooth() {
 
           <canvas ref={canvasRef} className="hidden" />
         </div>
-      </div>
     </div>
   );
 }
