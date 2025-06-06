@@ -28,7 +28,7 @@ export default function Home() {
           photobooth
         </div>
         
-        <Link href='/photobooth'>
+        <Link href='/welcome'>
           <button className="fadeInUp px-6 py-3 bg-white text-purple-300 font-semibold rounded-full hover:bg-purple-300 border-2 hover:text-white transition">
             take some pictures! →
           </button>
