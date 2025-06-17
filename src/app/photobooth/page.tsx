@@ -92,7 +92,7 @@ export default function Photobooth() {
     const context = canvas.getContext("2d");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-
+    
     context?.drawImage(video, 0, 0, canvas.width, canvas.height);
     const dataURL = canvas.toDataURL("image/png");
 
@@ -135,6 +135,7 @@ export default function Photobooth() {
 
   }
 
+  // download the strip
   const download = async () => {
     const stripURL = await generateStrip(photos);
     if (!stripURL) return;
@@ -162,7 +163,7 @@ export default function Photobooth() {
             </div>
 
             {!isCounting && (
-              <button onClick={startCountdown} id="countbtn" className="px-6 py-3 m-3 group bg-white text-purple-300 hover:scale-115 font-semibold rounded-full border-2 transition">
+              <button onClick={startCountdown} id="countbtn" className="px-6 py-3 m-3 group bg-white text-black hover:scale-115 font-semibold rounded-full border-2 transition">
                 <span className="block group-hover:hidden">ready?</span>
                 <span className="hidden group-hover:block">start countdown!</span>
               </button>
@@ -175,7 +176,7 @@ export default function Photobooth() {
             ))}
             <div>
               {photos.length === 3 && 
-              <button onClick={download} className="px-6 py-3 mt-3 group bg-white text-purple-300 font-semibold rounded-full border-2 hover:scale-115 transition">
+              <button onClick={download} className="px-6 py-3 mt-3 group bg-white text-black font-semibold rounded-full border-2 hover:scale-115 transition">
                 download your strip!
               </button>
               }
